@@ -21,8 +21,8 @@ class BukuBase(BaseModel):
     isbn: int
     jumlah: int
 
-class Pinjam(BaseModel):
-    notel: int
+class PinjamBase(BaseModel):
+    notel: str
     kelas: str
     nama: str
     judul: str
@@ -53,6 +53,13 @@ async def read_user(username: str, db: db_dependency):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User Not Found')
     return user 
 
+@app.get("/users/", status_code=status.HTTP_200_OK)
+async def read_Alluser(db: db_dependency):
+    user = db.query(models.User).all()
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User Not Found')
+    return user 
+
 @app.post("/buku/", status_code=status.HTTP_201_CREATED)
 async def create_buku(buku: BukuBase, db: db_dependency):
     db_buku = models.Buku(**buku.dict())
@@ -60,8 +67,35 @@ async def create_buku(buku: BukuBase, db: db_dependency):
     db.commit()
 
 @app.get("/buku/{judul}", status_code=status.HTTP_200_OK)
-async def read_user(judul: str, db: db_dependency):
+async def read_buku(judul: str, db: db_dependency):
     buku = db.query(models.Buku).filter(models.Buku.judul == judul).first()
     if buku is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Buku Not Found')
     return buku 
+
+@app.get("/buku/", status_code=status.HTTP_200_OK)
+async def read_Allbuku(db: db_dependency):
+    buku = db.query(models.Buku).all()
+    if buku is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Buku Not Found')
+    return buku 
+
+@app.post("/pinjam/", status_code=status.HTTP_201_CREATED)
+async def create_pinjam(pinjam: PinjamBase, db: db_dependency):
+    db_pinjam = models.Pinjam(**pinjam.dict())
+    db.add(db_pinjam)
+    db.commit()
+
+@app.get("/pinjam/{nama}", status_code=status.HTTP_200_OK)
+async def read_pinjam(nama: str, db: db_dependency):
+    get_pinjam = db.query(models.Pinjam).filter(models.Pinjam.nama == nama).first()
+    if get_pinjam is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not Found')
+    return get_pinjam 
+
+@app.get("/pinjam/", status_code=status.HTTP_200_OK)
+async def read_Allpinjam(db: db_dependency):
+    get_allPinjam = db.query(models.Pinjam).all()
+    if get_allPinjam is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not Found')
+    return get_allPinjam 

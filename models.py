@@ -24,7 +24,7 @@ class Pinjam(Base):
     __tablename__ = 'pinjaman'
 
     id = Column(Integer, primary_key=True, index=True)
-    notel = Column(Integer)
+    notel = Column(String(50))
     kelas = Column(String(50))
     nama = Column(String(50))
     judul = Column(String(50))
