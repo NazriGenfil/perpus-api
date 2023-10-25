@@ -60,6 +60,14 @@ async def read_Alluser(db: db_dependency):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='User Not Found')
     return user 
 
+@app.delete("/user/{username}", status_code=status.HTTP_200_OK)
+async def delete_user(username: str, db: db_dependency):
+    db_uname = db.query(models.User).filter(models.User.username == username).first()
+    if db_uname is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+    db.delete(db_uname)
+    db.commit()
+
 @app.post("/buku/", status_code=status.HTTP_201_CREATED)
 async def create_buku(buku: BukuBase, db: db_dependency):
     db_buku = models.Buku(**buku.dict())
@@ -80,6 +88,14 @@ async def read_Allbuku(db: db_dependency):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Buku Not Found')
     return buku 
 
+@app.delete("/buku/{judul}", status_code=status.HTTP_200_OK)
+async def delete_buku(judul: str, db: db_dependency):
+    db_judul = db.query(models.Buku).filter(models.Buku.judul == judul).first()
+    if db_judul is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+    db.delete(db_judul)
+    db.commit()
+
 @app.post("/pinjam/", status_code=status.HTTP_201_CREATED)
 async def create_pinjam(pinjam: PinjamBase, db: db_dependency):
     db_pinjam = models.Pinjam(**pinjam.dict())
@@ -99,3 +115,11 @@ async def read_Allpinjam(db: db_dependency):
     if get_allPinjam is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Not Found')
     return get_allPinjam 
+
+@app.delete("/pinjam{nama}", status_code=status.HTTP_200_OK)
+async def delete_pinjam(nama: str, db:db_dependency):
+    db_pinjam = db.query(models.Pinjam).filter(models.Pinjam.nama == nama).first()
+    if db_pinjam is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not Found")
+    db.delete(db_pinjam)
+    db.commit()
